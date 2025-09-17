@@ -10,13 +10,13 @@
            },
           "StreamingWatch":{
               "url":"https://www.streamingwatch.org",
-              "SW_PROXY": "0",
+              "SW_PROXY": "1",
               "SW_ForwardProxy": "0",
               "enabled":"1"
           },
           "CB01":{
               "url":"https://cb01.uno",
-              "CB_PROXY":"0",
+              "CB_PROXY":"1",
               "CB_ForwardProxy":"0",
               "MX_ForwardProxy":"0",
               "MX_PROXY":"0",
@@ -35,10 +35,10 @@
               "GH_PROXY":"0"
           },
           "Eurostreaming":{
-            "url": "https://eurostreaming.garden",
+            "url": "https://eurostreaming.wedding",
             "enabled": "1",
             "ES_ForwardProxy": "0",
-            "ES_PROXY": "0"
+            "ES_PROXY": "1"
           },  
           "Guardaflix":{
             "url": "https://guardaflix.live",
