@@ -10,7 +10,7 @@
            },
           "StreamingWatch":{
               "url":"https://www.streamingwatch.org",
-              "SW_PROXY": "1",
+              "SW_PROXY": "0",
               "SW_ForwardProxy": "0",
               "enabled":"1"
           },
@@ -26,16 +26,16 @@
               "url":"https://guardaserie.qpon",
               "enabled":"1",
               "GS_ForwardProxy":"0",
-              "GS_PROXY":"0"
+              "GS_PROXY":"1"
           },
           "GuardaHD":{
               "url":"https://mostraguarda.stream",
               "enabled":"1",
               "GH_ForwardProxy":"0",
-              "GH_PROXY":"0"
+              "GH_PROXY":"1"
           },
           "Eurostreaming":{
-            "url": "https://eurostreaming.wedding",
+            "url": "https://eurostreaming.garden",
             "enabled": "1",
             "ES_ForwardProxy": "0",
             "ES_PROXY": "1"
@@ -44,13 +44,13 @@
             "url": "https://guardaflix.live",
             "enabled": "1",
             "GF_ForwardProxy": "0",
-            "GF_PROXY": "0"
+            "GF_PROXY": "1"
           },
           "Guardoserie":{
             "url": "https://guardoserie.live",
             "enabled": "1",
             "GO_ForwardProxy": "0",
-            "GO_PROXY": "0"
+            "GO_PROXY": "1"
           },
           "AnimeWorld":{
             "url":"https://www.animeworld.so",
