@@ -23,7 +23,7 @@
               "enabled":"1"
           },
           "Guardaserie":{
-              "url":"https://guardaserie.qpon",
+              "url":"https://guardaserietv.cc",
               "enabled":"1",
               "GS_ForwardProxy":"0",
               "GS_PROXY":"1"
@@ -35,7 +35,7 @@
               "GH_PROXY":"1"
           },
           "Eurostreaming":{
-            "url": "https://eurostreaming.garden",
+            "url": "https://eurostreaming.wedding",
             "enabled": "1",
             "ES_ForwardProxy": "0",
             "ES_PROXY": "1"
@@ -68,4 +68,4 @@
        "level": "info",
        "Global_Proxy": "0"
        }
-  }
+}
