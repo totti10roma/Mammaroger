@@ -131,7 +131,7 @@ async def get_host_link(pattern,atag,client):
 async def scraping_links(atag,MFP,MFP_CREDENTIALS,client,streams,language):
     #Check which hosts are avaiable and extract the links from one of them. Turbovid uses Cloudflare therefore is not avaiable. Maxstream has a captcha. 
     if "MixDrop" in atag and "DeltaBit" in atag:
-        pattern = r'<a\s+href="([^"]+)"[^>]*rel="noopener"[^>]*>DeltaBit</a>'
+        pattern = r'<a\s+href="([^"]+)"[^>]*[^>]*>DeltaBit</a>'
         href = await get_host_link(pattern,atag,client)
         try:
             streams = await deltabit(href,client,streams,"Eurostreaming",proxies,ForwardProxy,language,'Deltabit')
@@ -259,7 +259,7 @@ async def eurostreaming(streams,id,client,MFP,MFP_CREDENTIALS):
 async def test_euro():
     from curl_cffi.requests import AsyncSession
     async with AsyncSession() as client:
-        results = await eurostreaming({'streams': []},"tt12324366:2:2",client,"0",['test','test'])
+        results = await eurostreaming({'streams': []},"tt33318655:2:8",client,"0",['test','test'])
         print(results)
 
 
