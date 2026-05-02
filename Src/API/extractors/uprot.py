@@ -89,39 +89,51 @@ async def generate_uprot_txt(numbers,cookies,client):
         logger.info(f'Uprot failed  to generate captcha cookie: {e}')
         return False
 
-async def get_maxstream_link(text,client):
+
+async def find_link(text,client):
     soup = BeautifulSoup(text,'lxml',parse_only=SoupStrainer('a'))
     a_tags = soup.find_all('a')
     max_stream = None
     for tag in a_tags:
-        if 'C O N T I N U E' in tag.text.upper():
+        if 'C O N T I N U E' in tag.text.upper() or 'CONTINUE' in tag.text.upper() :
             max_stream = tag['href']
-    if max_stream: 
-        redirect = max_stream
-        time = 0
-        while 'uprots' in redirect:
-            response = await client.head(ForwardProxy + max_stream,headers=headers,impersonate = 'chrome', allow_redirects = True, proxies = proxies)
-            redirect = response.url
-            time+=1
-            if time == 1000:
-                return False
-        max_stream = 'https://maxstream.video/emvvv/' + response.url.split('watchfree/')[1].split('/')[1]
+   
     return max_stream
+async def get_maxstream_link(text,client):
+        max_stream = await find_link(text,client)
+        if max_stream: 
+            redirect = max_stream
+            time = 0
+            while 'uprots' in redirect:
+                response = await client.head(ForwardProxy + max_stream,headers=headers,impersonate = 'chrome', allow_redirects = True, proxies = proxies)
+                redirect = response.url
+                time+=1
+                if time == 10:
+                    return False
+            max_stream = 'https://maxstream.video/emvvv/' + response.url.split('watchfree/')[1].split('/')[1]
+        return max_stream
 
 async def bypass_uprot(client,link):
     try:
-        if 'mse' in link:
-            link = link.replace('mse','msf')
-        current_directory = os.path.dirname(os.path.abspath(__file__))
-        file_path = os.path.join(current_directory, 'uprot.txt')
-        with open(file_path,'r') as file:
-            text = file.read()
-            parts = text.split('\n')
-            cookies = json.loads(parts[0].replace("'", '"'))
-            data = json.loads(parts[1].replace("'", '"'))
-        response = await client.post(ForwardProxy + link, cookies=cookies, headers=headers, data =data, impersonate = 'chrome', proxies = proxies)
-        max_stream = await get_maxstream_link(response.text,client)
+        if 'msfi'  not in link:
+            if 'msf' in link:
+                link = link.replace('msf','mse')
+            response = await client.get(ForwardProxy + link, headers=headers, impersonate = 'chrome', proxies = proxies)
+            max_stream = await find_link(response.text,client)
+        else:
+            if 'mse' in link:
+                link = link.replace('mse','msf')
+            current_directory = os.path.dirname(os.path.abspath(__file__))
+            file_path = os.path.join(current_directory, 'uprot.txt')
+            with open(file_path,'r') as file:
+                text = file.read()
+                parts = text.split('\n')
+                cookies = json.loads(parts[0].replace("'", '"'))
+                data = json.loads(parts[1].replace("'", '"'))
+            response = await client.post(ForwardProxy + link, cookies=cookies, headers=headers, data =data, impersonate = 'chrome', proxies = proxies)
+            max_stream = await get_maxstream_link(response.text,client)
         return max_stream
+        
     except Exception as e:
         logger.info(f'Uprot failed: {e}')
         if '[Errno 2] No such file or directory' in e:
