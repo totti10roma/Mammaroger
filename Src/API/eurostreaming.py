@@ -206,7 +206,7 @@ async def search(showname,date,season,episode,MFP,MFP_CREDENTIALS,client,streams
         title = description['title']['rendered']
         description = description['content']['rendered']
         ratio = difflib.SequenceMatcher(None, title, showname).ratio()
-        if ratio >=0.96:
+        if ratio >=0.96 or (showname in title):
             streams = await episodes_find(description,season,episode,MFP,MFP_CREDENTIALS,client,streams)
             return streams
         else:
@@ -224,6 +224,7 @@ async def search(showname,date,season,episode,MFP,MFP_CREDENTIALS,client,streams
                     match = year_pattern.search(response_2.text)
                     if match:
                         year = match.group(0)
+            print(abs(int(year)),int(date))
             if abs(int(year) - int(date)) <=1:
                 streams = await episodes_find(description,season,episode,MFP,MFP_CREDENTIALS,client,streams)
                 return streams
@@ -259,7 +260,7 @@ async def eurostreaming(streams,id,client,MFP,MFP_CREDENTIALS):
 async def test_euro():
     from curl_cffi.requests import AsyncSession
     async with AsyncSession() as client:
-        results = await eurostreaming({'streams': []},"tt33318655:2:8",client,"0",['test','test'])
+        results = await eurostreaming({'streams': []},"tt2701582:7:2",client,"0",['test','test'])
         print(results)
 
 
