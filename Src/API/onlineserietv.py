@@ -130,7 +130,7 @@ async def onlineserietv(streams,id,client):
                 showname,date = await get_info_imdb(clean_id,ismovie,type,client)
         else:
             showname,date = get_info_tmdb(clean_id,ismovie,type)
-        showname = showname.replace("'"," ")
+        showname = showname.replace("'"," ").split("-")[0]
         uprot_link,name = await search(showname,date,client,ismovie,episode,season)
         if uprot_link != None:
             streams = await get_maxstream(uprot_link,streams,'',client)
@@ -144,7 +144,7 @@ async def onlineserietv(streams,id,client):
 async def test_animeworld():
     from curl_cffi.requests import AsyncSession
     async with AsyncSession() as client:
-        test_id = "tt16426418"  # This is an example ID format
+        test_id = "tt0120363"  # This is an example ID format
         results = await onlineserietv({'streams': []},test_id, client)
         print(results)
 

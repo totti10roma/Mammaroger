@@ -65,12 +65,12 @@ async def search(showname,date,season,episode,MFP,MFP_CREDENTIALS,ismovie,client
         match = re.search(pattern,html)
         if match:
             url = match.group(1)
-        if 'maxstream' in url:
-            parts = url.split('.video/')
-            url = 'https://maxstream.video/emvvv/' + parts[1]
-            streams = await maxstream(url,client,streams,'ToonItalia','',proxies,ForwardProxy)
-        else:
-            streams = await voe(url,streams,'ToonItalia',MFP,MFP_CREDENTIALS,proxies,ForwardProxy,client)
+            if 'maxstream' in url:
+                parts = url.split('.video/')
+                url = 'https://maxstream.video/emvvv/' + parts[1]
+                streams = await maxstream(url,client,streams,'ToonItalia','',proxies,ForwardProxy)
+            else:
+                streams = await voe(url,streams,'ToonItalia',MFP,MFP_CREDENTIALS,proxies,ForwardProxy,client)
         return streams
     return streams
 
@@ -103,7 +103,7 @@ async def toonitalia(streams,id,client,MFP,MFP_CREDENTIALS):
             showname,date = get_info_tmdb(clean_id,ismovie,type)
         else:
             showname,date = await get_info_imdb(clean_id,ismovie,type,client)
-        streams = await search(showname,date, season,episode,MFP,MFP_CREDENTIALS,ismovie,client,streams)
+        streams = await search(showname.split('-')[0],date, season,episode,MFP,MFP_CREDENTIALS,ismovie,client,streams)
         return streams
     except Exception as e:
         logger.warning(f'Toonitalia Error: {e}')
@@ -114,7 +114,7 @@ async def toonitalia(streams,id,client,MFP,MFP_CREDENTIALS):
 async def test_toonitalia():
     from curl_cffi.requests import AsyncSession
     async with AsyncSession() as client:
-        results = await toonitalia({'streams': []},"tt0096697:1:1",client,"0",['test','test'])
+        results = await toonitalia({'streams': []},"tt0120363",client,"0",['test','test'])
         print(results)
 
         

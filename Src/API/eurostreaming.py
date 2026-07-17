@@ -156,7 +156,18 @@ async def scraping_links(atag,MFP,MFP_CREDENTIALS,client,streams,language):
             return streams
         except Exception as e:
             return streams
-    if 'DeltaBit' not in atag and 'MixDrop' not in atag and 'MaxStream' in atag:
+        
+ 
+        
+    if 'Deltabit' not in atag and 'Mixdrop' not in atag  and 'Turbovid' in atag:
+        try:
+            pattern = r'<a\s+href="([^"]+)"[^>]*rel="noopener"?[^>]*>Turbovid</a>'
+            href = await get_host_link(pattern,atag,client)
+            streams = await deltabit(href,client,streams,"Eurostreaming",proxies,ForwardProxy,language,'Turbovid')
+            return streams
+        except Exception as e:
+            return streams
+    if 'DeltaBit' not in atag and 'MixDrop' not in atag and 'Turbovid' not in atag and 'MaxStream' in atag:
         try:
             pattern = r'<a\s+href="([^"]+)"[^>]*rel="noopener"[^>]*>MaxStream</a>'
             match = re.search(pattern, atag)
@@ -166,24 +177,13 @@ async def scraping_links(atag,MFP,MFP_CREDENTIALS,client,streams,language):
             return streams
         except Exception as e:
             return streams
-    if 'Deltabit' not in atag and 'Mixdrop' not in atag and 'Maxstream' not in atag and 'Turbovid' in atag:
-        try:
-            pattern = r'<a\s+href="([^"]+)"[^>]*rel="noopener"?[^>]*>Turbovid</a>'
-            href = await get_host_link(pattern,atag,client)
-            streams = await deltabit(href,client,streams,"Eurostreaming",proxies,ForwardProxy,language,'Turbovid')
-            return streams
-        except Exception as e:
-            return streams
+        
     if 'DeltaBit' not in atag and 'MixDrop' not in atag and 'MaxStream' not in atag:
         logger.info("Just give up")
         return streams
 
-async def episodes_find(description,season,episode,MFP,MFP_CREDENTIALS,client,streams):
-    t = 0
-    episode = episode.zfill(2)
-    pattern = rf'\b{season}&#215;{episode}\s*(.*?)(?=<br\s*/?>)'
-    match = re.findall(pattern, description)
-    if match:
+async def language_selection(match,MFP,MFP_CREDENTIALS,client,streams):
+        t = 0
         for episode_details in match:
             if "href" in episode_details:
                 if t == 0:
@@ -192,6 +192,23 @@ async def episodes_find(description,season,episode,MFP,MFP_CREDENTIALS,client,st
                     language = "\nSUB-ITA"
                 t +=1
                 streams = await scraping_links(episode_details.split(' – ', 1)[1],MFP,MFP_CREDENTIALS,client,streams,language)
+        return streams
+
+async def episodes_find(description,link,headers,season,episode,MFP,MFP_CREDENTIALS,client,streams):
+    episode = episode.zfill(2)
+    pattern = rf'\b{season}&#215;{episode}\s*(.*?)(?=<br\s*/?>)'
+    match = re.findall(pattern, description)
+    if match:
+        streams = await language_selection(match,MFP,MFP_CREDENTIALS,client,streams)
+    else:
+        link = link.split('-')[0]
+        response = await client.get(f'{link}-links',headers=headers)
+
+        match = re.findall(pattern, response.text)
+        if match:
+            streams = await language_selection(match,MFP,MFP_CREDENTIALS,client,streams)
+
+
     return streams
 async def search(showname,date,season,episode,MFP,MFP_CREDENTIALS,client,streams):
     headers = random_headers.generate()
@@ -199,15 +216,16 @@ async def search(showname,date,season,episode,MFP,MFP_CREDENTIALS,client,streams
     response = await client.get(ForwardProxy + f"{ES_DOMAIN}/wp-json/wp/v2/search?search={quote(showname)}&_fields=id", proxies = proxies, headers = headers)
     results = response.json()
     for i in results:
-        response = await client.get(ForwardProxy + f"{ES_DOMAIN}/wp-json/wp/v2/posts/{i['id']}?_fields=content,title", proxies = proxies, headers = headers)
+        response = await client.get(ForwardProxy + f"{ES_DOMAIN}/wp-json/wp/v2/posts/{i['id']}?_fields=content,title,link", proxies = proxies, headers = headers)
         if f'ID articolo non valido' in response.text:
             continue
-        description = response.json()
-        title = description['title']['rendered']
-        description = description['content']['rendered']
+        description1 = response.json()
+        title = description1['title']['rendered']
+        description = description1['content']['rendered']
+        link = description1['link']
         ratio = difflib.SequenceMatcher(None, title, showname).ratio()
-        if ratio >=0.96 or (showname in title):
-            streams = await episodes_find(description,season,episode,MFP,MFP_CREDENTIALS,client,streams)
+        if ratio >=0.96:
+            streams = await episodes_find(description,link,headers,season,episode,MFP,MFP_CREDENTIALS,client,streams)
             return streams
         else:
             year_pattern = re.compile(r'(?<!/)(19|20)\d{2}(?!/)')
@@ -224,7 +242,6 @@ async def search(showname,date,season,episode,MFP,MFP_CREDENTIALS,client,streams
                     match = year_pattern.search(response_2.text)
                     if match:
                         year = match.group(0)
-            print(abs(int(year)),int(date))
             if abs(int(year) - int(date)) <=1:
                 streams = await episodes_find(description,season,episode,MFP,MFP_CREDENTIALS,client,streams)
                 return streams
@@ -260,7 +277,7 @@ async def eurostreaming(streams,id,client,MFP,MFP_CREDENTIALS):
 async def test_euro():
     from curl_cffi.requests import AsyncSession
     async with AsyncSession() as client:
-        results = await eurostreaming({'streams': []},"tt2701582:7:2",client,"0",['test','test'])
+        results = await eurostreaming({'streams': []},"tt1632701:3:9",client,"0",['test','test'])
         print(results)
 
 
