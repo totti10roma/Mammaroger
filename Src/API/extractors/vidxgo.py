@@ -50,7 +50,7 @@ headers = {
     'Sec-Fetch-Mode': 'navigate',
     'Sec-Fetch-Site': 'none',
     'DNT': '1',
-    'Referer': 'https://altadefinizione.you/',
+    'Referer': 'https://altadefinizionegratis.press/',
     'Sec-Fetch-Storage-Access': 'none',
     '-': '-',
     'Priority': 'u=0, i',
